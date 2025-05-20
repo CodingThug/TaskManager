@@ -16,4 +16,8 @@ contract TaskManager {
         uint256 createdAt;
         bool taskComplete;
     }
+
+    constructor() {
+        owner = msg.sender;
+    }
 }
