@@ -11,7 +11,7 @@ contract TaskManagerTest is Test {
     function setUp() public {
         // Corrected: The TaskManager constructor now requires an initialSupplyAmount.
         // We provide an example initial supply (e.g., 1,000,000 tokens with 18 decimals).
-        taskManager = new TaskManager(1_000_000 * 10**18);
+        taskManager = new TaskManager(1_000_000 * 10 ** 18);
     }
 
     // Test to ensure the contract deploys successfully and the owner is set.

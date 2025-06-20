@@ -9,8 +9,8 @@ contract TaskManager {
     ///////////////////////////////////////
 
     address public owner; // Declares a public state variable 'owner' of type 'address'.
-                         // 'public' automatically creates a getter function to read its value.
-                         // This will store the address of the contract deployer.
+        // 'public' automatically creates a getter function to read its value.
+        // This will store the address of the contract deployer.
 
     uint256 public nextTaskId = 1; // Counter for tasks, ensuring unique IDs, starting from 1.
 
@@ -55,7 +55,7 @@ contract TaskManager {
         uint256 createdAt; // Unix timestamp when the task was created. Good.
         bool taskComplete; // Status of task completion.
         AD_STATE state; // Current state of the advertisement (task).
-        // awaitingWhitelist removed: This is a global user status, not a task-specific status.
+            // awaitingWhitelist removed: This is a global user status, not a task-specific status.
     }
 
     ///////////////////////////////////////
@@ -65,15 +65,17 @@ contract TaskManager {
     ///////////////////////////////////////
 
     enum AD_STATE {
-        POSTED,     // Task is active and looking for mediation/sale.
-        MEDIATED,   // Task is under mediation.
-        MADE_SALE   // Task has been completed with a sale.
+        POSTED, // Task is active and looking for mediation/sale.
+        MEDIATED, // Task is under mediation.
+        MADE_SALE // Task has been completed with a sale.
+
     }
 
     enum WALLET_STATUS {
         NOT_WHITELISTED, // Wallet is not yet whitelisted (default).
-        PENDING,         // Wallet is waiting for verification/approval.
-        WHITELISTED      // Wallet is approved.
+        PENDING, // Wallet is waiting for verification/approval.
+        WHITELISTED // Wallet is approved.
+
     }
 
     ///////////////////////////////////////
@@ -94,7 +96,6 @@ contract TaskManager {
     event ContractUnpaused(address indexed by);
     event FundsWithdrawn(address indexed to, uint256 amount);
 
-
     ///////////////////////////////////////
     // CUSTOM ERRORS
     // A gas-efficient way to provide descriptive error messages when a transaction reverts.
@@ -113,7 +114,6 @@ contract TaskManager {
     error TaskNotFound(uint256 taskId);
     error InvalidStatusTransition();
     error AlreadyCompleted();
-
 
     ///////////////////////////////////////
     // CONSTRUCTOR
@@ -206,12 +206,11 @@ contract TaskManager {
         uint256 contractBalance = address(this).balance;
         if (contractBalance == 0) revert NoFundsToWithdraw();
 
-        (bool success, ) = payable(owner).call{value: contractBalance}("");
+        (bool success,) = payable(owner).call{value: contractBalance}("");
         if (!success) revert EtherTransferFailed();
 
         emit FundsWithdrawn(owner, contractBalance);
     }
-
 
     ///////////////////////////////////////
     // PUBLIC / EXTERNAL WRITE FUNCTIONS
@@ -227,7 +226,7 @@ contract TaskManager {
      * @param mintRarity A string indicating the rarity (e.g., "common", "rare").
      * @return true on successful minting.
      */
-    function mintForWhitelist(address _minter, string memory mintRarity) public payable whenNotPaused returns (bool){
+    function mintForWhitelist(address _minter, string memory mintRarity) public payable whenNotPaused returns (bool) {
         // Checks: Ensure the correct amount of Ether is sent for the whitelist mint.
         if (msg.value != whitelistMintPrice) revert InsufficientPayment(whitelistMintPrice, msg.value);
 
@@ -253,11 +252,11 @@ contract TaskManager {
      * @param _titleOfTask Title of the task.
      * @param _bodyOfTask Detailed description of the task.
      */
-    function createPost(
-        string memory _nameOfPersonCreatingTask,
-        string memory _titleOfTask,
-        string memory _bodyOfTask
-    ) public payable whenNotPaused {
+    function createPost(string memory _nameOfPersonCreatingTask, string memory _titleOfTask, string memory _bodyOfTask)
+        public
+        payable
+        whenNotPaused
+    {
         // Checks: Ensure payment for creating a post.
         if (msg.value != createPosterPrice) revert InsufficientPayment(createPosterPrice, msg.value);
         // Security: Add checks for string lengths, empty strings if critical.
@@ -296,7 +295,7 @@ contract TaskManager {
         // This requires iterating through userTasks to find the specific task, which can be expensive.
         // A direct mapping `mapping(uint256 => Task)` for tasks would be more efficient if IDs are globally unique.
         bool found = false;
-        for (uint i = 0; i < userTasks[_poster].length; i++) {
+        for (uint256 i = 0; i < userTasks[_poster].length; i++) {
             if (userTasks[_poster][i].taskId == _taskId) {
                 if (userTasks[_poster][i].state != AD_STATE.POSTED) revert InvalidStatusTransition();
                 userTasks[_poster][i].state = AD_STATE.MEDIATED;
@@ -318,7 +317,11 @@ contract TaskManager {
      * @param _amount The amount of tokens to transfer.
      * @return true on successful transfer.
      */
-    function transferAssets(address _transferFrom, address _transferTo, uint256 _amount) public whenNotPaused returns (bool) {
+    function transferAssets(address _transferFrom, address _transferTo, uint256 _amount)
+        public
+        whenNotPaused
+        returns (bool)
+    {
         // Checks: Basic validations.
         if (_transferFrom == address(0) || _transferTo == address(0)) revert ZeroAddress();
         if (_amount == 0) revert InvalidAmount();
@@ -425,7 +428,7 @@ contract TaskManager {
      * @return The Task struct.
      */
     function getTask(address _user, uint256 _taskId) public view returns (Task memory) {
-        for (uint i = 0; i < userTasks[_user].length; i++) {
+        for (uint256 i = 0; i < userTasks[_user].length; i++) {
             if (userTasks[_user][i].taskId == _taskId) {
                 return userTasks[_user][i];
             }
